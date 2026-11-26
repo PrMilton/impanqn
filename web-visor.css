@@ -1,0 +1,14 @@
+.web-visor{width:95%;box-sizing:border-box;margin:0 auto;border:0;border-radius:0;padding:0;overflow:hidden}
+.web-visor[hidden],.web-toggle[hidden]{display:none!important}
+.web-frame-slot{width:100%;aspect-ratio:21/9;background:#000}
+.web-frame-slot iframe{display:block;width:100%;height:100%;border:0}
+.web-toggle{width:46px;height:46px;display:grid;place-items:center;padding:10px;background:#ffffff12;color:#fff;border:1px solid #ffffff44;border-radius:12px;flex:none}
+.web-toggle[aria-expanded="true"]{background:#ffffff28;border-color:#c5994c}
+@media(max-width:420px){header{padding-inline:12px}.header-tools{gap:4px}.web-toggle,.header-tools .notice-bell,.header-tools .theme{width:44px;height:44px}.brand .impa-logo{width:48px;flex-basis:48px}.brand{gap:6px}.brand strong{font-size:.95rem}.brand small{font-size:.75rem}.topline{gap:6px}}
+.web-editor{margin:12px 18px;border:1px solid #52677b;border-radius:10px;padding:12px 16px;background:#142d46;color:#fff;font:14px/1.5 system-ui}
+.web-editor summary{cursor:pointer;font-weight:600}
+.web-editor label{display:block;margin-top:12px}
+.web-editor input{box-sizing:border-box;width:100%;margin:6px 0 10px;padding:10px;border:1px solid #73899c;border-radius:7px;background:#fff;color:#172c3f;font:inherit}
+.web-editor button{padding:9px 14px;border:1px solid #73899c;border-radius:7px;background:#243f57;color:#fff;cursor:pointer;font:inherit}
+.web-editor p{margin:8px 0 0;font-size:13px}
+@media print{.web-visor,.web-editor,.web-toggle{display:none!important}}

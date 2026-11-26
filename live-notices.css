@@ -1,0 +1,26 @@
+.header-tools{display:flex;gap:8px;align-items:center;flex:none}
+.notice-bell{position:relative;width:46px;height:46px;display:grid;place-items:center;padding:10px;background:#ffffff12;border:1px solid #ffffff44;color:#fff;border-radius:12px;cursor:pointer}
+.notice-bell svg{width:24px;height:24px}.notice-bell.has-notice{border-color:#ffc16b;background:#81410f}
+.notice-dot{position:absolute;right:-4px;top:-5px;min-width:20px;height:20px;display:grid;place-items:center;border-radius:50%;background:#d32f2f;border:2px solid #fff;color:#fff;font:bold 12px system-ui}
+.notice-dot[hidden]{display:none}.notice-dialog{width:min(480px,calc(100vw - 32px));max-height:85dvh;overflow:auto;border:2px solid #e6a241;border-radius:18px;padding:24px;background:#fff;color:#183047;box-shadow:0 20px 80px #0006}
+.notice-dialog::backdrop{background:#071321b3}.notice-dialog h2{font:750 1.25rem/1.4 system-ui;margin:0 0 16px}.notice-dialog p{font:1.125rem/1.6 system-ui;white-space:pre-wrap;overflow-wrap:anywhere;margin:0 0 18px}.notice-dialog #notice-dialog-time{font-size:.875rem;color:#526577}.notice-dialog button{width:100%;min-height:48px;border-radius:10px;border:0;background:#164f6d;color:#fff;font:bold 1rem system-ui;cursor:pointer}
+.live-notice-panel{background:#fff;color:#183047;border:1px solid #cbd6df;border-radius:12px;margin:12px 18px;font:14px/1.5 system-ui}.live-notice-panel>summary{padding:14px 18px;cursor:pointer;font-weight:750}.notice-compose{display:grid;gap:10px;padding:0 18px 18px;max-width:860px}.notice-compose label{font-weight:700}.notice-compose textarea{box-sizing:border-box;width:100%;min-height:100px;padding:12px;border:1px solid #8e9eac;border-radius:8px;font:16px/1.5 system-ui;background:#fff;color:#183047;resize:vertical}.notice-compose p{margin:0}.notice-compose .notice-help{font-size:13px;color:#526577}.notice-actions{display:flex;gap:10px;flex-wrap:wrap}.notice-actions button{min-height:44px;padding:10px 16px;border-radius:8px;border:1px solid #8e9eac;background:#164f6d;color:white;font:600 14px system-ui;cursor:pointer}.notice-actions button:disabled{opacity:.45;cursor:default}.notice-compose #notice-current{white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:#edf3f7;border-radius:8px}.notice-compose #notice-editor-status{min-height:1.5em;font-weight:600}
+.dark .notice-dialog,.dark .live-notice-panel{background:#1b2d3e;color:#edf3f8;border-color:#bc934e}.dark .notice-compose textarea{background:#101d29;color:#edf3f8}.dark .notice-compose .notice-help,.dark .notice-dialog #notice-dialog-time{color:#b6c7d6}.dark .notice-compose #notice-current{background:#101d29}
+.notice-bell:focus-visible,.notice-dialog button:focus-visible,.live-notice-panel :focus-visible{outline:3px solid #d99530;outline-offset:3px}
+@media(max-width:420px){.header-tools{gap:6px}.notice-bell,.header-tools .theme{width:42px;height:44px;padding:8px}.brand .impa-logo{width:60px;height:70px;flex-basis:60px}.topline{gap:8px}.brand{gap:8px}.brand strong{font-size:1rem}.brand small{font-size:.8rem}}
+@media print{.live-notice-panel,.notice-dialog,.notice-bell{display:none!important}}
+
+/* Luz LED en el borde: el mensaje permanece quieto y con alto contraste. */
+@property --notice-angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+.notice-dialog{--notice-surface:#fff}
+.dark .notice-dialog{--notice-surface:#1b2d3e}
+.notice-dialog.is-urgent,.dark .notice-dialog.is-urgent{
+  border:3px solid transparent;
+  background:linear-gradient(var(--notice-surface),var(--notice-surface)) padding-box,
+    conic-gradient(from var(--notice-angle),#cf1837 0deg,#cf1837 220deg,#ff3455 265deg,#fff0f3 290deg,#ff3455 315deg,#cf1837 360deg) border-box;
+  box-shadow:0 0 9px #ff294caa,0 0 28px #ff294c66,0 20px 80px #0008;
+}
+.notice-dialog.is-urgent[open]{animation:notice-led-orbit 4s linear infinite}
+@keyframes notice-led-orbit{to{--notice-angle:360deg}}
+@media(prefers-reduced-motion:reduce){.notice-dialog.is-urgent[open]{animation:none}}
+@media(forced-colors:active){.notice-dialog.is-urgent,.dark .notice-dialog.is-urgent{border:3px solid CanvasText;background:Canvas;box-shadow:none;animation:none}}
