@@ -1302,7 +1302,7 @@ render();
   return {lat:r.geometry.location.lat(),lng:r.geometry.location.lng(),city};
  }
  async function sync(){
-  if(running||!mapReady||document.querySelector('dialog[open]'))return;running=true;
+  if(running||!mapReady||!parent.GestorCerca.canAutoLocate?.()||document.querySelector('dialog[open]'))return;running=true;
   try{
    const entries=parent.GestorCerca.getState().records.filter(r=>r.type==='person'&&r.address&&!Geo.valid(r));
    for(const entry of entries){
@@ -1312,6 +1312,7 @@ render();
     if(!point||document.querySelector('dialog[open]')){if(point)attempted.delete(key);continue;}
     // Re-read after the request: never save a stale address or overwrite concurrent tasks.
     const latest=parent.GestorCerca.getState(),current=latest.records.find(r=>r.id===entry.id);
+    if(!parent.GestorCerca.canAutoLocate?.())break;
     if(!current||signature(current)!==stamp)continue;
     Object.assign(current,point);
     if(!parent.GestorCerca.save(latest))break;
