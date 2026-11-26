@@ -10,7 +10,7 @@
    const key=m.id||m.name+'|'+m.birthDate;if(seen.has(key))return false;seen.add(key);return true;
   }).sort((a,b)=>a.birthDate.slice(8).localeCompare(b.birthDate.slice(8))||a.name.localeCompare(b.name,'es'));
  }
- function message(members,date){return '🎂 Cumpleaños de '+date.toLocaleDateString('es-AR',{month:'long',year:'numeric'})+' · IMPA Neuquén\n\n'+members.map(m=>'• '+Number(m.birthDate.slice(8))+' — '+m.name).join('\n')+'\n\n¡Acompañemos con cariño y oración a nuestros hermanos en su cumpleaños! Que el Señor bendiga sus vidas. 🎉';}
+ function message(members,date){return 'Cumpleaños de '+date.toLocaleDateString('es-AR',{month:'long',year:'numeric'})+' · IMPA Neuquén\n\n'+members.map(m=>'• '+Number(m.birthDate.slice(8))+' — '+m.name).join('\n')+'\n\n¡Acompañemos con cariño y oración a nuestros hermanos en su cumpleaños! Que el Señor bendiga sus vidas.';}
  root.BirthdayModel={list,message};
  if(typeof module!=='undefined')module.exports=root.BirthdayModel;
  if(typeof document==='undefined')return;
@@ -33,7 +33,7 @@
   const ul=el('ul',null,'space-y-2');items.forEach(m=>{
    const day=Number(m.birthDate.slice(8)),isToday=date.getFullYear()===today.getFullYear()&&date.getMonth()===today.getMonth()&&day===today.getDate();
    const row=el('li',null,'flex items-center justify-between gap-3 p-2 rounded-lg border dark:border-gray-600');const label=el('div');label.append(el('strong',String(day).padStart(2,'0')+' · '+m.name));if(isToday)label.append(el('span','¡Cumple hoy!','block text-sm text-emerald-600 dark:text-emerald-300'));row.append(label);
-   const phone=whatsappNumber(m.phone);if(phone&&phone.length>=10&&phone.length<=15){const a=el('a',null,'inline-flex items-center justify-center rounded-lg text-emerald-600 dark:text-emerald-300');a.style.cssText='min-width:44px;min-height:44px;font-size:22px';a.innerHTML='<i class="fa-brands fa-whatsapp" aria-hidden="true"></i>';a.title='Saludar a '+m.name+' por WhatsApp';a.setAttribute('aria-label',a.title);a.target='_blank';a.rel='noopener noreferrer';a.href='https://wa.me/'+phone+'?text='+encodeURIComponent('¡Feliz cumpleaños, '+m.name+'! 🎂 Que el Señor bendiga tu vida y te acompañe en este nuevo año. Con cariño, tu familia de IMPA Neuquén.');row.append(a);}else row.append(el('small','Sin teléfono','text-sm'));ul.append(row);
+   const phone=whatsappNumber(m.phone);if(phone&&phone.length>=10&&phone.length<=15){const a=el('a',null,'inline-flex items-center justify-center rounded-lg text-emerald-600 dark:text-emerald-300');a.style.cssText='min-width:44px;min-height:44px;font-size:22px';a.innerHTML='<i class="fa-brands fa-whatsapp" aria-hidden="true"></i>';a.title='Saludar a '+m.name+' por WhatsApp';a.setAttribute('aria-label',a.title);a.target='_blank';a.rel='noopener noreferrer';a.href='https://wa.me/'+phone+'?text='+encodeURIComponent('¡Feliz cumpleaños, '+m.name+'! Que el Señor bendiga tu vida y te acompañe en este nuevo año. Con cariño, tu familia de IMPA Neuquén.');row.append(a);}else row.append(el('small','Sin teléfono','text-sm'));ul.append(row);
   });section.append(ul);const button=el('button','Generar mensaje para el grupo','w-full mt-3 px-3 py-2 rounded-lg border font-bold no-print');button.onclick=()=>preview(message(items,date));section.append(button);
  }
  const oldEvents=renderUpcomingEvents;renderUpcomingEvents=function(...args){const result=oldEvents.apply(this,args);render();return result;};
