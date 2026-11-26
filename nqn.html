@@ -6426,7 +6426,7 @@ ritualRoot.render(<LibroPastoralApp />);
  for(const el of original){if(el.tagName==='INPUT'&&el.type==='hidden')continue;if(el.tagName==='BUTTON'){el.hidden=true;continue;}const ids=[el.id,...[...el.querySelectorAll('[id]')].map(x=>x.id)];columns[ids.some(x=>family.includes(x))?1:ids.some(x=>ministry.includes(x))?2:0].append(el);}
  // Keep every field accessible to assistive technology, including the original unbound labels.
  for(const label of form.querySelectorAll('label.member-label')){const input=label.parentElement.querySelector('input[id],select[id],textarea[id]');if(input)label.htmlFor=input.id;}
- card.innerHTML='<div class="file-launcher"><h3>Fichero de miembros</h3><p>Abrí una ficha para editarla y pasar a la siguiente sin volver a la lista.</p><button type="button" id="file-open-first">Abrir fichero</button><button type="button" id="file-new">+ Nuevo miembro</button><h3 id="member-form-title" hidden>Nuevo miembro</h3></div>';
+ card.innerHTML='<h3 id="member-form-title" hidden>Nuevo miembro</h3>';card.hidden=true;card.style.setProperty('display','none','important');
  let order=[],baseline='',busy=false,failed=false,activeId='';
  // Private DNI is asynchronously loaded and must not mark the public form as edited.
  let numberBaseline='';
@@ -6457,7 +6457,7 @@ ritualRoot.render(<LibroPastoralApp />);
  window.editMember=function(id){if(busy)return;if(dialog.open){void permit().then(ok=>{if(ok)open(id);});}else open(id);};
  window.newMemberForm=function(focus=true){if(busy)return;if(dialog.open){void permit().then(ok=>{if(ok)open(null);});}else if(focus===false)baseNew(false);else open(null);};
  window.saveMember=function(e){e.preventDefault();return save();};
- $('file-prev').onclick=()=>move(-1);$('file-next').onclick=()=>move(1);$('file-save').onclick=save;$('file-save-next').onclick=()=>move(1,true);$('file-close').onclick=close;$('file-new').onclick=()=>open(null);$('file-open-first').onclick=()=>{const first=$('members-registry-list').querySelector('article[onclick^="openMemberDetail("]');const id=first?.getAttribute('onclick').match(/openMemberDetail\('([^']+)'\)/)?.[1]||membersRegistry[0]?.id;open(id);};
+ $('file-prev').onclick=()=>move(-1);$('file-next').onclick=()=>move(1);$('file-save').onclick=save;$('file-save-next').onclick=()=>move(1,true);$('file-close').onclick=close;
  dialog.addEventListener('cancel',e=>{e.preventDefault();void close();});
  form.addEventListener('input',update);form.addEventListener('change',update);form.addEventListener('click',()=>setTimeout(update,0));
  window.addEventListener('beforeunload',e=>{if(dialog.open&&(dirty()||busy)){e.preventDefault();e.returnValue='';}});
