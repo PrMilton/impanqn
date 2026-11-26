@@ -17,12 +17,13 @@
  const section=document.createElement('section');section.id='monthly-birthdays';section.className='p-4 border-t dark:border-gray-700';
  document.getElementById('upcoming-events').parentElement.after(section);
  const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
- function preview(text){
+ function preview(text,recipient=null){
   document.getElementById('birthday-message-dialog')?.remove();const d=el('dialog');d.id='birthday-message-dialog';d.style.cssText='width:min(560px,94vw);padding:24px;border:1px solid var(--ui-line);border-radius:16px;background:var(--ui-panel,#263445);color:var(--ui-text,#eef2f7)';
-  d.append(el('h2','Mensaje para la congregación','text-lg font-bold mb-3'));const area=el('textarea');area.value=text;area.setAttribute('aria-label','Mensaje de cumpleaños');area.className='member-input';area.style.cssText='width:100%;min-height:250px';d.append(area);
+  d.append(el('h2',recipient?'Saludo para '+recipient.name:'Mensaje para la congregación','text-lg font-bold mb-3'));const area=el('textarea');area.value=text;area.setAttribute('aria-label','Mensaje de cumpleaños');area.className='member-input';area.style.cssText='width:100%;min-height:250px';d.append(area);
+  if(recipient)d.append(el('p','WhatsApp: +'+recipient.phone,'text-sm mt-2'));
   const actions=el('div',null,'flex flex-wrap gap-2 mt-3');
   const copy=el('button','Copiar','px-3 py-2 rounded-lg border');copy.onclick=async()=>{try{await navigator.clipboard.writeText(area.value);copy.textContent='Copiado';}catch{area.focus();area.select();copy.textContent='Seleccionado: copiá el texto';}};
-  const share=el('a','Compartir por WhatsApp','px-3 py-2 rounded-lg border');share.target='_blank';share.rel='noopener noreferrer';share.href='https://wa.me/?text='+encodeURIComponent(area.value);area.oninput=()=>share.href='https://wa.me/?text='+encodeURIComponent(area.value);
+  const share=el('a',recipient?'Enviar por WhatsApp':'Compartir por WhatsApp','px-3 py-2 rounded-lg border');share.target='_blank';share.rel='noopener noreferrer';share.href='https://wa.me/'+(recipient?.phone||'')+'?text='+encodeURIComponent(area.value);area.oninput=()=>share.href='https://wa.me/'+(recipient?.phone||'')+'?text='+encodeURIComponent(area.value);
   const close=el('button','Cerrar','px-3 py-2 rounded-lg border');close.onclick=()=>d.close();actions.append(copy,share,close);d.append(actions);document.body.append(d);d.showModal();
  }
  function renderContent(){
@@ -33,7 +34,7 @@
   const ul=el('ul',null,'space-y-2');items.forEach(m=>{
    const day=Number(m.birthDate.slice(8)),isToday=date.getFullYear()===today.getFullYear()&&date.getMonth()===today.getMonth()&&day===today.getDate();
    const row=el('li',null,'flex items-center justify-between gap-3 p-2 rounded-lg border dark:border-gray-600');const label=el('div');label.append(el('strong',String(day).padStart(2,'0')+' · '+m.name));if(isToday)label.append(el('span','¡Cumple hoy!','block text-sm text-emerald-600 dark:text-emerald-300'));row.append(label);
-   const phone=whatsappNumber(m.phone);if(phone&&phone.length>=10&&phone.length<=15){const a=el('a',null,'inline-flex items-center justify-center rounded-lg text-emerald-600 dark:text-emerald-300');a.style.cssText='min-width:44px;min-height:44px;font-size:22px';a.innerHTML='<i class="fa-brands fa-whatsapp" aria-hidden="true"></i>';a.title='Saludar a '+m.name+' por WhatsApp';a.setAttribute('aria-label',a.title);a.target='_blank';a.rel='noopener noreferrer';a.href='https://wa.me/'+phone+'?text='+encodeURIComponent('¡Feliz cumpleaños, '+m.name+'! \u{1F382} Que el Señor bendiga tu vida y te acompañe en este nuevo año. Con cariño, tu familia de IMPA Neuquén.');row.append(a);}else row.append(el('small','Sin teléfono','text-sm'));ul.append(row);
+   const phone=whatsappNumber(m.phone);if(phone&&phone.length>=10&&phone.length<=15){const a=el('button',null,'inline-flex items-center justify-center rounded-lg text-emerald-600 dark:text-emerald-300');a.style.cssText='min-width:44px;min-height:44px;font-size:22px';a.innerHTML='<i class="fa-brands fa-whatsapp" aria-hidden="true"></i>';a.title='Saludar a '+m.name+' por WhatsApp';a.setAttribute('aria-label',a.title);a.type='button';a.onclick=()=>preview('¡Feliz cumpleaños, '+m.name+'! \u{1F382} Que el Señor bendiga tu vida y te acompañe en este nuevo año. Con cariño, tu familia de IMPA Neuquén.',{name:m.name,phone});row.append(a);}else row.append(el('small','Sin teléfono','text-sm'));ul.append(row);
   });section.append(ul);const button=el('button','Generar mensaje para el grupo','w-full mt-3 px-3 py-2 rounded-lg border font-bold no-print');button.onclick=()=>preview(message(items,date));section.append(button);
  }
  const compact=matchMedia('(max-width:1023px)');
