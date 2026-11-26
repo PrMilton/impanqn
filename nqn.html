@@ -1231,7 +1231,24 @@ body>main{padding:12px 16px 24px!important;box-sizing:border-box}
   }catch(e){return responseError('No se confirmó el guardado: '+e.message,503);}finally{busy.delete(base);}
  };
 })();
-</script></head>
+</script><style id="ritual-palette">
+@media screen {
+#vista-rituales .ritual-controls,#vista-rituales .ritual-editor-shell,#vista-rituales .ql-container{background:var(--ui-panel)!important;color:var(--ui-ink)!important;border-color:var(--ui-line)!important}
+#vista-rituales .ritual-controls{box-shadow:none!important}
+#vista-rituales .ritual-controls :is(span,div){color:var(--ui-muted);border-color:var(--ui-line)!important}
+#vista-rituales .ritual-editor-toolbar{background:var(--ui-soft)!important;border-color:var(--ui-line)!important;box-shadow:none!important}
+#vista-rituales :is(.ritual-controls,.ritual-editor-toolbar) :is(select,button:not([title^="Resaltador"])){background:var(--ui-panel)!important;color:var(--ui-ink)!important;border-color:var(--ui-line)!important}
+#vista-rituales :is(.ritual-controls,.ritual-editor-toolbar) button:not([title^="Resaltador"]):hover{background:var(--ui-blue-soft)!important;color:var(--ui-blue)!important}
+#vista-rituales :is(.ritual-controls,.ritual-editor-toolbar) :is(button,select):focus-visible{outline:2px solid var(--ui-blue);outline-offset:2px}
+#vista-rituales .ritual-editor-toolbar>span{background:var(--ui-line)!important}
+#vista-rituales .ql-editor{color:var(--ui-ink);caret-color:var(--ui-ink)}
+#vista-rituales .ql-editor.ql-blank::before{color:var(--ui-muted)}
+#vista-rituales :is(.ql-editor,.ritual-rich-content) [style*="background-color"]{color:#18212d}
+#vista-rituales ::-webkit-scrollbar-track{background:var(--ui-bg)}
+#vista-rituales ::-webkit-scrollbar-thumb{background:var(--ui-line)}
+}
+</style>
+</head>
 <body class="text-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-gray-200 min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Loading Screen (Firebase Sync) -->
@@ -5485,7 +5502,7 @@ const RitualControls = ({ settings, setSettings, onPrint, onPrintAll, toggleSide
   ];
 
   return (
-    <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-200 px-4 py-3 shadow-sm flex flex-wrap gap-4 items-center justify-between no-print">
+    <div className="ritual-controls sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-200 px-4 py-3 shadow-sm flex flex-wrap gap-4 items-center justify-between no-print">
       <div className="flex items-center gap-3">
         <button onClick={toggleSidebar} className="p-2 text-blue-700 hover:bg-blue-50 rounded-full" title="Mostrar u ocultar índice">
           <Menu />
