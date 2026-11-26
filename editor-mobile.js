@@ -11,9 +11,9 @@ const icon=n=>'<i class="fa-solid fa-'+(faIcons[n]||faIcons.content)+'" aria-hid
 const root=document.createElement('section');root.id='compact-editor';root.setAttribute('aria-label','Editor compacto');document.querySelector('#day-workspace').append(root);
 const dialog=document.createElement('dialog');dialog.id='compact-dialog';document.body.append(dialog);
 const toggle=document.createElement('button');toggle.id='compact-mode';toggle.textContent='Vista compacta';document.querySelector('.appbar').append(toggle);
-let manual=false, draft=null, returnFocus=null;
+let manual=true, draft=null, returnFocus=null;
 const media=matchMedia('(max-width:900px)');
-function mode(){document.body.classList.toggle('compact-mode',manual||media.matches);toggle.textContent=manual?'Vista A4':'Vista compacta';}
+function mode(){document.body.classList.toggle('compact-mode',manual);toggle.innerHTML='<i class="fa-solid fa-'+(manual?'file-pen':'table-cells-large')+'" aria-hidden="true"></i>';toggle.title=manual?'Editar documento en vista A4':'Volver a vista compacta';toggle.setAttribute('aria-label',toggle.title);toggle.setAttribute('aria-pressed',String(!manual));}
 toggle.onclick=()=>{manual=!manual;mode();render();};media.addEventListener('change',mode);mode();
 function tool(action,title,symbol){return `<button type="button" data-tool="${action}" aria-label="${title}" title="${title}">${icon(symbol)}<span>${title}</span></button>`;}
 function render(){

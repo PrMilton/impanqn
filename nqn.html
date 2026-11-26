@@ -1248,7 +1248,7 @@ body>main{padding:12px 16px 24px!important;box-sizing:border-box}
 #vista-rituales ::-webkit-scrollbar-thumb{background:var(--ui-line)}
 }
 </style>
-</head>
+<style id="ritual-insert-icons">.ritual-inline-icon{display:inline-block;vertical-align:baseline;padding:0 .12em;line-height:1.2}.ritual-inline-icon .fa-solid{font-size:1em} .ritual-insert-bar{padding:8px 12px;border-bottom:1px solid var(--ui-line);background:var(--ui-soft)}.ritual-insert-bar button,.ritual-icon-picker button{background:var(--ui-panel);color:var(--ui-ink);border:1px solid var(--ui-line);padding:9px 12px;border-radius:8px}.ritual-insert-bar i{margin-right:6px}.ritual-icon-picker{padding:12px;max-height:260px;overflow:auto;flex-shrink:0;background:var(--ui-soft)}.ritual-icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:10px}.ritual-icon-grid button{display:flex;align-items:center;gap:8px;text-align:left;font-size:12px}.ritual-icon-grid i{font-size:20px;width:24px;flex-shrink:0;text-align:center}.ritual-icon-picker button:hover{border-color:var(--ui-blue);background:var(--ui-blue-soft)}.ritual-icon-picker button:focus-visible{outline:2px solid var(--ui-blue);outline-offset:2px}</style></head>
 <body class="text-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-gray-200 min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Loading Screen (Firebase Sync) -->
@@ -5622,14 +5622,25 @@ const RitualCeremonyContent = ({ data, settings, isPrintMode, showAll }) => {
   );
 };
 
+const RITUAL_INSERT_ICONS = [["book-bible","Biblia"],["cross","Cruz"],["hands-praying","Oración"],["person-praying","De rodillas"],["person","De pie"],["chair","Sentados"],["hands","Manos alzadas"],["music","Música"],["microphone","Micrófono"],["church","Templo"],["users","Congregación"],["heart","Amor y gratitud"],["dove","Paloma"],["hand-holding-heart","Bendición"],["hand-holding-dollar","Ofrenda"],["water","Agua y bautismo"],["ring","Matrimonio"],["bread-slice","Pan"],["wine-glass","Copa"],["book-open","Lectura"],["scroll","Mensaje"],["bullhorn","Anuncio"],["clock","Tiempo"],["calendar-days","Fecha"],["circle-info","Información"],["triangle-exclamation","Atención"],["circle-check","Confirmación"],["star","Destacado"]];
 const RitualRichEditor = ({ initialHtml, onContentChange }) => {
   const editorElement = React.useRef(null);
   const quillInstance = React.useRef(null);
   const [ready, setReady] = useState(false);
+  const [iconPickerOpen,setIconPickerOpen]=useState(false);
+  const iconPosition=React.useRef(null);
+  const insertIcon=(key)=>{const q=quillInstance.current;if(!q)return;const at=Math.min(iconPosition.current??q.getLength()-1,q.getLength()-1);q.history.cutoff();q.insertEmbed(at,'ritualicon',key,'user');q.insertText(at+1,' ','user');q.history.cutoff();q.setSelection(at+2,0,'silent');q.focus();setIconPickerOpen(false);};
 
   useEffect(() => {
     if (!window.Quill || !editorElement.current) return;
     if (!window.__ritualQuillFormatsRegistered) {
+      const Embed = Quill.import('blots/embed');
+      class RitualIcon extends Embed {
+        static blotName='ritualicon';static tagName='SPAN';static className='ritual-inline-icon';
+        static create(value){const node=super.create();const item=RITUAL_INSERT_ICONS.find(([key])=>key===value)||RITUAL_INSERT_ICONS[0];node.dataset.ritualIcon=item[0];node.setAttribute('role','img');node.setAttribute('aria-label',item[1]);node.setAttribute('title',item[1]);node.setAttribute('contenteditable','false');const icon=document.createElement('i');icon.className='fa-solid fa-'+item[0];icon.setAttribute('aria-hidden','true');node.append(icon);return node;}
+        static value(node){return node.dataset.ritualIcon;}
+      }
+      Quill.register(RitualIcon,true);
       const Font = Quill.import('formats/font');
       Font.whitelist = ['merriweather', 'montserrat', 'sabon', 'gill-sans'];
       Quill.register(Font, true);
@@ -5649,7 +5660,7 @@ const RitualRichEditor = ({ initialHtml, onContentChange }) => {
     const quill = new Quill(editorElement.current, {
       theme: 'snow',
       modules: { toolbar: false, history: { delay: 700, maxStack: 150, userOnly: true } },
-      formats: ['bold','italic','underline','strike','font','size','fontweight','background','align','list','indent','lineheight','paragraphspace']
+      formats: ['ritualicon','bold','italic','underline','strike','font','size','fontweight','background','align','list','indent','lineheight','paragraphspace']
     });
     quill.clipboard.dangerouslyPasteHTML(0, initialHtml || '<p><br></p>', 'silent');
     quillInstance.current = quill;
@@ -5707,6 +5718,8 @@ const RitualRichEditor = ({ initialHtml, onContentChange }) => {
       <button type="button" className={buttonClass} onClick={() => quillInstance.current?.history.redo()} title="Rehacer" aria-label="Rehacer"><i className="fas fa-rotate-right"></i></button>
       <button type="button" className={buttonClass} onClick={() => quillInstance.current?.removeFormat(0, quillInstance.current.getLength())} title="Limpiar formato" aria-label="Limpiar formato"><i className="fas fa-broom"></i></button>
     </div>
+    <div className="ritual-insert-bar no-print"><button type="button" aria-expanded={iconPickerOpen} aria-controls="ritual-icon-picker" onMouseDown={e=>e.preventDefault()} onClick={()=>{const q=quillInstance.current;iconPosition.current=q?.getSelection()?.index??q?.getLength()-1;setIconPickerOpen(!iconPickerOpen);}}><i className="fas fa-icons" aria-hidden="true"></i> Insertar ícono</button></div>
+    {iconPickerOpen && <div id="ritual-icon-picker" className="ritual-icon-picker no-print" role="group" aria-label="Íconos para insertar"><div className="ritual-icon-grid">{RITUAL_INSERT_ICONS.map(([key,label])=><button key={key} type="button" title={label} onClick={()=>insertIcon(key)}><i className={'fa-solid fa-'+key} aria-hidden="true"></i><span>{label}</span></button>)}</div><button type="button" onClick={()=>{setIconPickerOpen(false);quillInstance.current?.focus();}}>Cerrar selector</button></div>}
     {!ready && <div className="p-8 text-center text-gray-400">Preparando editor…</div>}
     <div ref={editorElement}></div>
   </div>;
@@ -6512,7 +6525,7 @@ ritualRoot.render(<LibroPastoralApp />);
 })();
 </script><script>/* Use the published editor itself: one source, one Firebase connection and the existing viewer URL. */
 (()=>{
- const editorUrl='editor-liturgia.html?v=8.9.7';
+ const editorUrl='editor-liturgia.html?v=8.9.8';
  const button=document.createElement('button');
  button.id='tab-liturgia';button.type='button';button.className=document.getElementById('tab-personal').className;
  button.innerHTML='<i class="fas fa-list-ol mr-2" aria-hidden="true"></i>Orden de Cultos';button.onclick=()=>switchTab('liturgia');
