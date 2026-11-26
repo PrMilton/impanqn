@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore { match /databases/{database}/documents {
+
+ function google() { return request.auth != null && request.auth.token.email_verified == true && request.auth.token.firebase.sign_in_provider == 'google.com'; }
+ function owner() { return google() && request.auth.token.email == 'miltong.nqn@gmail.com'; }
+ function allowed() { return owner() || (google() && exists(/databases/$(database)/documents/gestor_access/$(request.auth.token.email.lower())) && get(/databases/$(database)/documents/gestor_access/$(request.auth.token.email.lower())).data.active == true); }
+ match /gestor_access/{email} {
+  allow get: if owner() || (google() && request.auth.token.email.lower() == email);
+  allow list: if owner();
+  allow create, update: if owner() && email != 'miltong.nqn@gmail.com' && request.resource.data.keys().hasOnly(['active','updatedBy','updatedAt']) && request.resource.data.active is bool && request.resource.data.updatedBy == request.auth.token.email && request.resource.data.updatedAt == request.time;
+  allow delete: if owner() && email != 'miltong.nqn@gmail.com';
+ }
+
+ match /congregacion_data/{id} { allow read, write: if allowed(); }
+ match /impa_accounting/{id} { allow read, write: if allowed(); }
+ match /ritual_versions/{id} { allow read, write: if allowed(); }
+ match /artifacts/{id} { allow read, write: if allowed(); }
+ // Preserve current behavior of unrelated legacy apps. Inventory before release.
+ match /{collection}/{document=**} { allow read, write: if !(collection in ['congregacion_data','impa_accounting','ritual_versions','artifacts','gestor_access']); }
+}}

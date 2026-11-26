@@ -5,7 +5,7 @@
     "public": {
       "liturgy": {
         ".read": true,
-        ".write": "auth != null && auth.token.email === 'miltong.nqn@gmail.com' && auth.token.email_verified === true && auth.token.firebase.sign_in_provider === 'google.com' && newData.exists()",
+        ".write": "(auth != null && auth.token.email_verified === true && auth.token.firebase.sign_in_provider === 'google.com' && (auth.token.email === 'miltong.nqn@gmail.com' || root.child('gestorAccess').child(auth.token.email.toLowerCase().replace('.', '%2E')).child('active').val() === true)) && newData.exists()",
         ".validate": "newData.hasChildren(['payload', 'revision', 'updatedAt'])",
         "payload": {
           ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1000000"
@@ -23,7 +23,7 @@
       "notices": {
         "$day": {
           ".read": "$day === 'jueves' || $day === 'viernes' || $day === 'sabado' || $day === 'domingo' || $day === 'especial'",
-          ".write": "auth != null && auth.token.email === 'miltong.nqn@gmail.com' && auth.token.email_verified === true && auth.token.firebase.sign_in_provider === 'google.com' && newData.exists() && ($day === 'jueves' || $day === 'viernes' || $day === 'sabado' || $day === 'domingo' || $day === 'especial')",
+          ".write": "(auth != null && auth.token.email_verified === true && auth.token.firebase.sign_in_provider === 'google.com' && (auth.token.email === 'miltong.nqn@gmail.com' || root.child('gestorAccess').child(auth.token.email.toLowerCase().replace('.', '%2E')).child('active').val() === true)) && newData.exists() && ($day === 'jueves' || $day === 'viernes' || $day === 'sabado' || $day === 'domingo' || $day === 'especial')",
           ".validate": "newData.hasChildren(['id','text','active','createdAt']) && ((newData.child('active').val() === true && newData.child('createdAt').val() >= now - 60000 && newData.child('createdAt').val() <= now + 60000) || (newData.child('active').val() === false && data.exists() && newData.child('id').val() === data.child('id').val() && newData.child('text').val() === data.child('text').val() && newData.child('createdAt').val() === data.child('createdAt').val()))",
           "id": {
             ".validate": "newData.isString() && newData.val().matches(/^[a-zA-Z0-9_-]{1,80}$/)"
@@ -44,7 +44,7 @@
       },
       "urgentNotice": {
         ".read": true,
-        ".write": "auth != null && auth.token.email === 'miltong.nqn@gmail.com' && auth.token.email_verified === true && auth.token.firebase.sign_in_provider === 'google.com' && newData.exists()",
+        ".write": "(auth != null && auth.token.email_verified === true && auth.token.firebase.sign_in_provider === 'google.com' && (auth.token.email === 'miltong.nqn@gmail.com' || root.child('gestorAccess').child(auth.token.email.toLowerCase().replace('.', '%2E')).child('active').val() === true)) && newData.exists()",
         ".validate": "newData.hasChildren(['id','text','active','createdAt']) && ((newData.child('active').val() === true && newData.child('createdAt').val() >= now - 60000 && newData.child('createdAt').val() <= now + 60000) || (newData.child('active').val() === false && data.exists() && newData.child('id').val() === data.child('id').val() && newData.child('text').val() === data.child('text').val() && newData.child('createdAt').val() === data.child('createdAt').val()))",
         "id": {
           ".validate": "newData.isString() && newData.val().matches(/^[a-zA-Z0-9_-]{1,80}$/)"
@@ -57,6 +57,22 @@
         },
         "createdAt": {
           ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "gestorAccess": {
+      ".read": "auth != null && auth.token.email_verified === true && auth.token.firebase.sign_in_provider === 'google.com' && auth.token.email === 'miltong.nqn@gmail.com'",
+      "$email": {
+        ".write": "auth != null && auth.token.email_verified === true && auth.token.firebase.sign_in_provider === 'google.com' && auth.token.email === 'miltong.nqn@gmail.com'",
+        ".validate": "newData.hasChildren(['active','updatedBy'])",
+        "active": {
+          ".validate": "newData.isBoolean()"
+        },
+        "updatedBy": {
+          ".validate": "newData.val() === auth.token.email"
         },
         "$other": {
           ".validate": false

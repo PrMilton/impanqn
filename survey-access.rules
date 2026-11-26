@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+
+ function google() { return request.auth != null && request.auth.token.email_verified == true && request.auth.token.firebase.sign_in_provider == 'google.com'; }
+ function owner() { return google() && request.auth.token.email == 'miltong.nqn@gmail.com'; }
+ function allowed() { return owner() || (google() && exists(/databases/$(database)/documents/gestor_access/$(request.auth.token.email.lower())) && get(/databases/$(database)/documents/gestor_access/$(request.auth.token.email.lower())).data.active == true); }
+ match /gestor_access/{email} {
+  allow get: if owner() || (google() && request.auth.token.email.lower() == email);
+  allow list: if owner();
+  allow create, update: if owner() && email != 'miltong.nqn@gmail.com' && request.resource.data.keys().hasOnly(['active','updatedBy','updatedAt']) && request.resource.data.active is bool && request.resource.data.updatedBy == request.auth.token.email && request.resource.data.updatedAt == request.time;
+  allow delete: if owner() && email != 'miltong.nqn@gmail.com';
+ }
+
+  // Preserve the existing public bulletin rule.
+  match /public/cartelera {
+   allow read: if true;
+   allow write: if allowed();
+  }
+  function reviewer() { return allowed(); }
+  function text(value, maximum) { return value is string && value.size() <= maximum; }
+  function validDataV1(d) {
+   return d.keys().hasAll(['name','birthDate','phone','contactOwner','city','address','reference','family','baptism','membership','helper'])
+    && d.keys().hasOnly(['name','birthDate','phone','contactOwner','city','address','reference','family','baptism','membership','helper'])
+    && text(d.name,120) && d.name.size() >= 3 && text(d.birthDate,10)
+    && text(d.phone,60) && text(d.contactOwner,120) && text(d.city,80)
+    && text(d.address,240) && text(d.reference,300) && text(d.family,500)
+    && text(d.baptism,400) && text(d.membership,100) && text(d.helper,120);
+  }
+
+
+
+  function validMoment(precision,date,year) {
+   return (precision == 'unknown' && date == '' && year == '')
+    || (precision == 'year' && date == '' && year.matches('^[0-9]{4}$') && int(year) >= 1900 && int(year) <= request.time.year())
+    || (precision == 'exact' && year == '' && date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'));
+  }
+  function validEvent(status,precision,date,year) {
+   return status in ['yes','no','unknown'] && (status == 'yes' ? validMoment(precision,date,year) : (precision == '' && date == '' && year == ''));
+  }
+  function validDataV2(d) {
+   return d.size() == 39 && d.keys().hasOnly(['name','birthDate','phone','contactOwner','city','address','reference','family','baptism','membership','helper','dni','dniStatus','minor','guardian','guardianRelationship','guardianConsent','addressStatus','street','houseNumber','noNumber','unit','otherCity','baptismPlace','joinPrecision','joinDate','joinYear','baptismPrecision','baptismDate','baptismYear','baptismStatus','probationPrecision','probationDate','probationYear','probationStatus','communionPrecision','communionDate','communionYear','communionStatus'])
+    && d.name is string && d.name.size() <= 120
+    && d.birthDate is string && d.birthDate.size() <= 10
+    && d.phone is string && d.phone.size() <= 60
+    && d.contactOwner is string && d.contactOwner.size() <= 120
+    && d.city is string && d.city.size() <= 80
+    && d.address is string && d.address.size() <= 280
+    && d.reference is string && d.reference.size() <= 300
+    && d.family is string && d.family.size() <= 500
+    && d.baptism is string && d.baptism.size() <= 400
+    && d.membership is string && d.membership.size() <= 100
+    && d.helper is string && d.helper.size() <= 120
+    && d.dni is string && d.dni.size() <= 8
+    && d.dniStatus is string && d.dniStatus.size() <= 12
+    && d.minor is string && d.minor.size() <= 3
+    && d.guardian is string && d.guardian.size() <= 120
+    && d.guardianRelationship is string && d.guardianRelationship.size() <= 80
+    && d.guardianConsent is string && d.guardianConsent.size() <= 3
+    && d.addressStatus is string && d.addressStatus.size() <= 7
+    && d.street is string && d.street.size() <= 160
+    && d.houseNumber is string && d.houseNumber.size() <= 40
+    && d.noNumber is string && d.noNumber.size() <= 3
+    && d.unit is string && d.unit.size() <= 60
+    && d.otherCity is string && d.otherCity.size() <= 80
+    && d.baptismPlace is string && d.baptismPlace.size() <= 200
+    && d.joinPrecision is string && d.joinPrecision.size() <= 7
+    && d.joinDate is string && d.joinDate.size() <= 10
+    && d.joinYear is string && d.joinYear.size() <= 4
+    && d.baptismPrecision is string && d.baptismPrecision.size() <= 7
+    && d.baptismDate is string && d.baptismDate.size() <= 10
+    && d.baptismYear is string && d.baptismYear.size() <= 4
+    && d.baptismStatus is string && d.baptismStatus.size() <= 7
+    && d.probationPrecision is string && d.probationPrecision.size() <= 7
+    && d.probationDate is string && d.probationDate.size() <= 10
+    && d.probationYear is string && d.probationYear.size() <= 4
+    && d.probationStatus is string && d.probationStatus.size() <= 7
+    && d.communionPrecision is string && d.communionPrecision.size() <= 7
+    && d.communionDate is string && d.communionDate.size() <= 10
+    && d.communionYear is string && d.communionYear.size() <= 4
+    && d.communionStatus is string && d.communionStatus.size() <= 7
+    && d.name.size() >= 3
+    && d.minor in ['yes','no']
+    && (d.minor != 'yes' || (d.guardian.size() >= 3 && d.guardianRelationship.size() > 0 && d.guardianConsent == 'yes'))
+    && d.dniStatus in ['provided','unknown','none']
+    && (d.dniStatus == 'provided' ? d.dni.matches('^[0-9]{7,8}$') : d.dni == '')
+    && d.addressStatus in ['known','unknown']
+    && (d.addressStatus != 'known' || (d.street.size() > 0 && d.city.size() > 0 && (d.houseNumber.size() > 0 || (d.noNumber == 'yes' && d.reference.size() > 0))))
+    && (d.city != 'Otra localidad' || d.otherCity.size() > 0)
+    && validMoment(d.joinPrecision,d.joinDate,d.joinYear) && validEvent(d.baptismStatus,d.baptismPrecision,d.baptismDate,d.baptismYear) && validEvent(d.probationStatus,d.probationPrecision,d.probationDate,d.probationYear) && validEvent(d.communionStatus,d.communionPrecision,d.communionDate,d.communionYear)
+    && (d.baptismStatus != 'yes' || d.baptismPlace.size() > 0);
+  }
+  match /member_surveys/{id} {
+   allow create: if id.size() == 36
+    && request.resource.data.keys().hasAll(['schema','status','consent','data','createdAt'])
+    && request.resource.data.keys().hasOnly(['schema','status','consent','data','createdAt'])
+    && request.resource.data.schema in [1,2] && request.resource.data.status == 'pending'
+    && request.resource.data.consent == true && request.resource.data.createdAt == request.time
+    && (request.resource.data.schema == 1 ? validDataV1(request.resource.data.data) : validDataV2(request.resource.data.data));
+   allow read: if reviewer();
+   allow update: if reviewer()
+    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','memberId','reviewedAt'])
+    && request.resource.data.status in ['reviewed','dismissed','pending']
+    && text(request.resource.data.memberId,120)
+    && request.resource.data.reviewedAt == request.time;
+   allow delete: if false;
+  }
+ }
+}
