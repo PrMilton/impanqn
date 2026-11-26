@@ -30,11 +30,13 @@ if (viewer) {
 }
 
 async function start() {
-  const [{initializeApp}, database] = await Promise.all([
-    import('https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js'),
-    import('https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js')
+  const [{initializeApp}, importedDatabase] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/13.3.0/firebase-database.js')
   ]);
-  const app = initializeApp(config);
+  if(editor)await window.GestorAccess.ready;
+  const app = editor?window.GestorAccess.apps[config.projectId]:initializeApp(config);
+  const database=editor?window.GestorAccess.sdk.database:importedDatabase;
   const db = database.getDatabase(app);
   const shared = database.ref(db, 'public/liturgy');
   let notices = {setAuthorized(){}};
@@ -65,7 +67,7 @@ async function start() {
     return;
   }
   if (!editor) return;
-  const authSdk = await import('https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js');
+  const authSdk = window.GestorAccess.sdk.auth;
   const auth = authSdk.getAuth(app);
   auth.languageCode = 'es';
   const login = document.querySelector('#cloud-login');
@@ -76,7 +78,7 @@ async function start() {
   let user = null, latest = null, ready = false, connected = false;
   let revision = 0, baseline = '', pending = null, saving = false, conflict = false, timer;
   let initialBackup = false;
-  const authorized = () => user?.email === 'miltong.nqn@gmail.com' && user.emailVerified;
+  const authorized = () => window.GestorAccess?.allowed && user?.emailVerified;
   function access() {
     const allowed = authorized();
     notices.setAuthorized(!!allowed);
@@ -186,7 +188,7 @@ async function start() {
   };
   logout.onclick = async () => {
     if (pending || saving) { message('Esperá a que termine la sincronización antes de salir.'); return; }
-    await authSdk.signOut(auth);
+    await window.GestorAccess.logout();
   };
   publish.onclick = async () => {
     if (!authorized() || !ready || latest) return;

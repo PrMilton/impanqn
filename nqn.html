@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" class="light">
-<head>
+<head><script src="gestor-access.js?v=8.9.13"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor IMPA 8.3: Cartelera, Personal, Miembros, Peticiones y Ritual</title>
@@ -6318,9 +6318,9 @@ ritualRoot.render(<LibroPastoralApp />);
 })(globalThis);
 </script><script>window.SurveyService=(()=>{
  let runtime;
- async function connect(){if(!IMPA_SURVEY_CONFIG.enabled||!IMPA_SURVEY_CONFIG.firebase)throw Error('El envío todavía no está habilitado.');if(!runtime)runtime=Promise.all([import('https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js'),import('https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js'),import('https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js')]).then(([a,f,g])=>{const app=a.initializeApp(IMPA_SURVEY_CONFIG.firebase,'impa-survey');return {f,g,db:f.getFirestore(app),auth:g.getAuth(app)};}).catch(e=>{runtime=null;throw e;});return runtime;}
+ async function connect(){if(!IMPA_SURVEY_CONFIG.enabled||!IMPA_SURVEY_CONFIG.firebase)throw Error('El envío todavía no está habilitado.');if(!runtime)runtime=Promise.all([import('https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js'),import('https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js'),import('https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js')]).then(async([a,f,g])=>{await window.GestorAccess.ready;const app=window.GestorAccess.apps[IMPA_SURVEY_CONFIG.firebase.projectId];return {f,g,db:f.getFirestore(app),auth:g.getAuth(app)};}).catch(e=>{runtime=null;throw e;});return runtime;}
  async function send(id,data){const {f,db}=await connect();await f.setDoc(f.doc(db,IMPA_SURVEY_CONFIG.collection,id),{schema:2,status:'pending',consent:true,data:SurveyModel.validate(data),createdAt:f.serverTimestamp()});}
- async function login(){const {g,auth}=await connect();await g.setPersistence(auth,g.browserSessionPersistence);if(!auth.currentUser)await g.signInWithPopup(auth,new g.GoogleAuthProvider());return auth.currentUser;}
+ async function login(){const {g,auth}=await connect();await g.setPersistence(auth,g.browserLocalPersistence);if(!auth.currentUser)await g.signInWithPopup(auth,new g.GoogleAuthProvider());return auth.currentUser;}
  async function list(status='pending'){const {f,db}=await connect();const q=f.query(f.collection(db,IMPA_SURVEY_CONFIG.collection),f.where('status','==',status),f.limit(100));const s=await f.getDocs(q);return s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));}
  async function finish(id,status,memberId=''){const {f,db}=await connect();await f.updateDoc(f.doc(db,IMPA_SURVEY_CONFIG.collection,id),{status,memberId,reviewedAt:f.serverTimestamp()});}
  async function logout(){const {g,auth}=await connect();await g.signOut(auth);}
@@ -6550,5 +6550,5 @@ ritualRoot.render(<LibroPastoralApp />);
  };
 })();
 </script><script id="gestor-tab-order">(()=>{const order=['cartelera','peticiones','miembros','cerca','personal','liturgia','rituales','mayordomia'];const nav=document.getElementById('tab-cartelera').parentElement;for(const id of order){const button=document.getElementById('tab-'+id);if(button)nav.append(button);}})();</script>
-<script src="birthdays.js?v=8.9.12"></script></body>
+<script src="birthdays.js?v=8.9.13"></script></body>
 </html>
