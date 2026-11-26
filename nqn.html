@@ -1295,7 +1295,7 @@ body>main{padding:12px 16px 24px!important;box-sizing:border-box}
                 <button onclick="switchTab('personal')" id="tab-personal" class="flex-1 md:flex-none whitespace-nowrap px-4 py-2 rounded-md font-bold text-sm transition-all duration-300 text-blue-100 hover:bg-blue-700 dark:text-gray-300 dark:hover:bg-gray-600">
                     <i class="fas fa-users mr-1"></i> Personal
                 </button>
-                <button onclick="switchTab('cerca')" id="tab-cerca" class="px-4 py-2 rounded-md font-bold text-sm text-blue-100"><i class="fas fa-map-marked-alt mr-2" aria-hidden="true"></i>Mapa y organización</button><button onclick="switchTab('miembros')" id="tab-miembros" class="flex-1 md:flex-none whitespace-nowrap px-4 py-2 rounded-md font-bold text-sm transition-all duration-300 text-blue-100 hover:bg-blue-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                <button onclick="switchTab('cerca')" id="tab-cerca" class="px-4 py-2 rounded-md font-bold text-sm text-blue-100"><i class="fas fa-map-marked-alt mr-2" aria-hidden="true"></i>Mapa ImpaNqn</button><button onclick="switchTab('miembros')" id="tab-miembros" class="flex-1 md:flex-none whitespace-nowrap px-4 py-2 rounded-md font-bold text-sm transition-all duration-300 text-blue-100 hover:bg-blue-700 dark:text-gray-300 dark:hover:bg-gray-600">
                     <i class="fas fa-address-book mr-1"></i> Miembros
                 </button>
                 <button onclick="switchTab('peticiones')" id="tab-peticiones" class="flex-1 md:flex-none whitespace-nowrap px-4 py-2 rounded-md font-bold text-sm transition-all duration-300 text-blue-100 hover:bg-blue-700 dark:text-gray-300 dark:hover:bg-gray-600">
@@ -6515,10 +6515,10 @@ ritualRoot.render(<LibroPastoralApp />);
  const editorUrl='editor-liturgia.html';
  const button=document.createElement('button');
  button.id='tab-liturgia';button.type='button';button.className=document.getElementById('tab-personal').className;
- button.innerHTML='<i class="fas fa-list-ol mr-2" aria-hidden="true"></i>Liturgia';button.onclick=()=>switchTab('liturgia');
+ button.innerHTML='<i class="fas fa-list-ol mr-2" aria-hidden="true"></i>Orden de Cultos';button.onclick=()=>switchTab('liturgia');
  document.getElementById('tab-personal').before(button);
  const section=document.createElement('section');section.id='vista-liturgia';section.className='hidden';
- section.setAttribute('aria-label','Editor de Liturgia');
+ section.setAttribute('aria-label','Editor de Orden de Cultos');
  document.getElementById('vista-mayordomia').after(section);
  let frame;
  const previous=switchTab;
@@ -6536,5 +6536,6 @@ ritualRoot.render(<LibroPastoralApp />);
   }
  };
 })();
-</script></body>
+</script><script id="gestor-tab-order">(()=>{const order=['cartelera','peticiones','miembros','cerca','personal','liturgia','rituales','mayordomia'];const nav=document.getElementById('tab-cartelera').parentElement;for(const id of order){const button=document.getElementById('tab-'+id);if(button)nav.append(button);}})();</script>
+</body>
 </html>
