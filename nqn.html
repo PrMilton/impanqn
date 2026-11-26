@@ -1589,9 +1589,7 @@ body>main{padding:12px 16px 24px!important;box-sizing:border-box}
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <button onclick="newMemberForm()" class="px-4 py-2.5 rounded-xl bg-white text-blue-900 font-bold shadow"><i class="fas fa-user-plus mr-2"></i>Nuevo miembro</button>
-                            <button onclick="document.getElementById('google-contacts-file').click()" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold"><i class="fab fa-google mr-2"></i>Importar contactos</button>
                             <input id="google-contacts-file" type="file" accept=".csv,text/csv" class="hidden" onchange="loadGoogleContactsCsv(event)">
-                            <button onclick="exportMembersExcel()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 font-bold"><i class="fas fa-file-excel mr-2"></i>Excel</button>
                             <button onclick="exportMembersJson()" class="px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-600 font-bold"><i class="fas fa-download mr-2"></i>Respaldo</button>
                         </div>
                     </div>
@@ -6209,7 +6207,7 @@ ritualRoot.render(<LibroPastoralApp />);
  window.removeMember=id=>{const m=membersRegistry.find(x=>x.id===id);if(!m)return;if(!confirm('¿Mover la ficha de '+m.name+' a la papelera? Se quitará del padrón y de Personal. Los datos se pueden restaurar. Las asignaciones y actividades históricas se conservan.'))return;apply(MemberMaintenance.trash(state(),id));newMemberForm(false);showToast('Ficha en la papelera. Podés restaurarla.','success');};
  window.openMemberTrash=()=>{const d=modal('Papelera de miembros');for(const e of appData.memberTrash||[]){const row=document.createElement('p');row.textContent=e.member.name+' · ';const b=document.createElement('button');b.textContent='Restaurar ficha';b.onclick=()=>{apply(MemberMaintenance.restore(state(),e.member.id));d.close();openMemberTrash();};row.append(b);d.append(row);}if(!(appData.memberTrash||[]).length)d.append(document.createTextNode('La papelera está vacía.'));};
  const bar=document.querySelector('#vista-miembros button[onclick="exportMembersJson()"]')?.parentElement;
- for(const [label,fn] of [['Revisar duplicados',reviewMemberDuplicates],['Papelera',openMemberTrash]]){const b=document.createElement('button');b.textContent=label;b.className='px-4 py-2.5 rounded-xl bg-blue-700 text-white font-bold';b.onclick=fn;bar?.append(b);}
+ for(const [label,fn] of [['Revisar duplicados',reviewMemberDuplicates]]){const b=document.createElement('button');b.textContent=label;b.className='px-4 py-2.5 rounded-xl bg-blue-700 text-white font-bold';b.onclick=fn;bar?.append(b);}
  const b=document.createElement('button');b.type='button';b.textContent='Eliminar ficha';b.style.cssText='color:var(--ui-red);margin:10px';b.onclick=()=>{const id=document.getElementById('member-id').value;if(id)removeMember(id);else showToast('Primero elegí una ficha para editar.','error');};document.getElementById('member-form').append(b);
 })();
 </script><script>(function(root){
@@ -6310,20 +6308,20 @@ ritualRoot.render(<LibroPastoralApp />);
  const $=id=>document.getElementById(id);let modal,user;
  function node(tag,text){const n=document.createElement(tag);if(text)n.textContent=text;return n;}
  function button(text,action){const b=node('button',text);b.type='button';b.className='px-4 py-2 rounded-lg border font-bold';b.onclick=action;return b;}
- function shell(){modal?.remove();modal=node('dialog');modal.id='survey-inbox';modal.style.cssText='width:min(980px,96vw);max-height:90vh;padding:24px;overflow:auto;background:var(--ui-panel);color:var(--ui-text);border:1px solid var(--ui-line);border-radius:16px';modal.append(node('h2','Encuesta y fichas por revisar'),button('Cerrar',()=>modal.close()));document.body.append(modal);modal.showModal();return modal;}
+ function shell(){modal?.remove();modal=node('dialog');modal.id='survey-inbox';modal.style.cssText='width:min(980px,96vw);max-height:90vh;padding:24px;overflow:auto;background:var(--ui-panel);color:var(--ui-text);border:1px solid var(--ui-line);border-radius:16px';modal.append(node('h2','Revisar registros'),button('Cerrar',()=>modal.close()));document.body.append(modal);modal.showModal();return modal;}
  function message(e){return e?.code==='permission-denied'?'Esta cuenta no tiene permiso para revisar respuestas.':e?.code==='auth/popup-blocked'?'El navegador bloqueó la ventana de Google. Permití la ventana y volvé a ingresar.':'No se pudo completar la operación. Revisá la conexión y la cuenta autorizada. Código: '+(e?.code||'sin código');}
  async function show(initialState='pending'){const d=shell();const actions=node('div');actions.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin:18px 0';actions.append(button('Abrir encuesta',()=>window.open(IMPA_SURVEY_CONFIG.publicUrl,'_blank','noopener,noreferrer')),button('Copiar invitación para WhatsApp',async()=>{const text='Hola, hermanos. Estamos actualizando las fichas de la congregación. Podés completar la encuesta: '+IMPA_SURVEY_CONFIG.publicUrl+'\nSi te resulta difícil, respondé este mensaje o mandanos un audio y te ayudamos. Los datos que no recordás pueden quedar pendientes.';try{await navigator.clipboard.writeText(text);showToast('Invitación copiada','success');}catch{const t=node('textarea');t.value=text;d.append(t);t.select();}}));d.append(actions);
   const details=node('details');details.append(node('summary','Cuestionario para responder por mensaje o audio'));const questionnaire=node('textarea');questionnaire.readOnly=true;questionnaire.style.cssText='width:100%;min-height:240px';questionnaire.value='Hola, hermanos. Para actualizar tu ficha, respondé lo que recuerdes. También podés mandar un audio o pedir ayuda.\n\n1. Nombre y apellido.\n2. Fecha de nacimiento.\n3. Teléfono de contacto y de quién es.\n4. Ciudad, dirección y referencia.\n5. Familiares que asisten y parentesco.\n6. ¿Cuándo ingresaste a esta congregación? Fecha exacta o solo año.\n7. ¿Estás bautizado/a en agua? Fecha exacta o solo año; nombre de iglesia y localidad.\n8. ¿Fuiste recibido/a como miembro probando? ¿Cuándo?\n9. ¿Fuiste recibido/a en plena comunión? ¿Cuándo?\n10. ¿Es la ficha de un menor de 14 años? Indicá nombre y parentesco del adulto responsable.\n\nSi no recordás una fecha, indicá que queda pendiente. Para el DNI, usá el formulario privado: ' + IMPA_SURVEY_CONFIG.publicUrl + '\n\n¿Autorizás que usemos estos datos para actualizar tu ficha y organizar el acompañamiento? No envíes DNI ni información médica.';details.append(questionnaire,button('Copiar cuestionario',()=>navigator.clipboard.writeText(questionnaire.value).then(()=>showToast('Cuestionario copiado','success')).catch(()=>questionnaire.select())));d.append(details);
   const status=node('p');status.setAttribute('role','status');d.append(status);
   if(!IMPA_SURVEY_CONFIG.enabled){status.textContent='La encuesta está preparada. Falta habilitar el envío y el acceso privado a las respuestas en Firebase.';return;}
   let loadVersion=0;
-  async function load(state){const version=++loadVersion;try{status.textContent='Conectando…';user=await SurveyService.login();const rows=await SurveyService.list(state);if(version!==loadVersion||!d.isConnected)return;status.textContent='Sesión: '+user.email+' · '+rows.length+' respuestas '+({pending:'pendientes',reviewed:'revisadas',dismissed:'archivadas'})[state]+' (hasta 100 por carga).';d.querySelector('[data-responses]')?.remove();const list=node('section');list.dataset.responses='';
+  async function load(state){const version=++loadVersion;try{status.textContent='Conectando…';user=await SurveyService.login();const rows=await SurveyService.list(state);if(version!==loadVersion||!d.isConnected)return;status.textContent='';d.querySelector('[data-responses]')?.remove();const list=node('section');list.dataset.responses='';
    for(const item of rows){const row=node('div');row.style.cssText='padding:14px;border-bottom:1px solid var(--ui-line);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap';const actions=node('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
     actions.append(button(state==='pending'?'Revisar ficha':'Ver respuesta',()=>{if(state==='pending')review(item);else{const history=shell();history.append(node('h3',item.data.name));const text=node('pre',SurveyModel.message(item.data));text.style.cssText='white-space:pre-wrap;font:inherit';history.append(text,button('Incorporar o corregir datos en Miembros',()=>review(item)),button('Volver',()=>show(state)));}}));
     const archive=button(state==='dismissed'?'Restaurar a pendientes':'Archivar respuesta',async()=>{archive.disabled=true;try{await SurveyService.finish(item.id,state==='dismissed'?'pending':'dismissed',item.memberId||'');await load(state);}catch(e){status.textContent=message(e);archive.disabled=false;}});actions.append(archive);row.append(node('span',item.data.name),actions);list.append(row);
    }if(!rows.length)list.append(node('p','No hay respuestas en esta lista.'));d.append(list);
   }catch(e){if(version===loadVersion)status.textContent=message(e);}}
-  d.append(node('p','Pendientes muestra solo las respuestas por resolver. Archivar las quita de esa lista sin cambiar Miembros; podés recuperarlas en Archivadas.'),button(user?'Actualizar pendientes':'Ingresar con Google para revisar',()=>load('pending')),button('Ver respuestas revisadas',()=>load('reviewed')),button('Ver archivadas',()=>load('dismissed')),button('Cerrar sesión',async()=>{try{++loadVersion;await SurveyService.logout();user=null;show();}catch(e){status.textContent=message(e);}}));
+  d.append(button(user?'Actualizar pendientes':'Ingresar con Google para revisar',()=>load('pending')),button('Ver archivadas',()=>load('dismissed')));
   if(user)await load(typeof initialState==='string'?initialState:'pending');
  }
  function review(item){const d=shell();const data=SurveyModel.clean(item.data);d.append(node('h3',data.name),node('p','Compará la respuesta con el padrón. Ningún dato se reemplaza sin elegirlo. Podés incorporar las fechas exactas y el lugar del bautismo. También se incorporan solo años y confirmaciones sin fecha, sin inventar día ni mes. El DNI se conserva de forma privada y se consulta desde la ficha del miembro después de vincular y revisar la respuesta. Los vínculos y la categoría se revisan manualmente.'));
@@ -6348,7 +6346,7 @@ ritualRoot.render(<LibroPastoralApp />);
  }
  window.openSurveyInbox=show;
  const bar=document.querySelector('#vista-miembros button[onclick="exportMembersJson()"]')?.parentElement;
- const b=button('Encuesta y respuestas',show);bar?.append(b);
+ const b=button('Revisar registros',show);bar?.append(b);
 })();
 </script><script>(()=>{
  const field=document.getElementById('member-document-number');if(!field)return;
@@ -6362,7 +6360,7 @@ ritualRoot.render(<LibroPastoralApp />);
    const dni=await SurveyService.memberDni(id,ids);
    if(version!==generation||document.getElementById('member-id').value!==id)return;
    if(dni){field.value=dni;field.readOnly=true;field.dataset.privateSurveyDni='1';note.textContent='DNI de la encuesta revisada · acceso privado. Se conserva al guardar la ficha.';}
-   else note.textContent='No hay DNI en una encuesta revisada y vinculada a esta ficha. Revisá su respuesta en Encuesta y respuestas.';
+   else note.textContent='No hay DNI en una encuesta revisada y vinculada a esta ficha. Revisá su respuesta en Revisar registros.';
   }catch(e){if(version===generation)note.textContent='No se pudo consultar el DNI. Ingresá con la cuenta autorizada y reintentá.';}
   finally{if(version===generation)button.disabled=false;}
  }
