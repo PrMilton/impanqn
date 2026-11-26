@@ -5681,31 +5681,31 @@ const RitualRichEditor = ({ initialHtml, onContentChange }) => {
     <div className="ritual-editor-toolbar z-30 rounded-t-xl bg-gray-50 border-b border-gray-200 p-2 flex flex-wrap gap-2 items-center no-print shadow-sm">
       <select onChange={e => format('font', e.target.value || false)} className="h-9 px-2 rounded-lg border border-gray-200 bg-white text-xs"><option value="merriweather">Merriweather</option><option value="montserrat">Montserrat</option><option value="sabon">Sabon</option><option value="gill-sans">Gill Sans</option></select>
       <select onChange={e => format('size', e.target.value || false)} className="h-9 px-2 rounded-lg border border-gray-200 bg-white text-xs"><option value="12pt">12</option><option value="14pt">14</option><option value="16pt">16</option><option value="18pt">18</option><option value="20pt">20</option><option value="24pt">24</option><option value="28pt">28</option><option value="32pt">32</option></select>
-      <select onChange={e => format('fontweight', e.target.value)} className="h-9 px-2 rounded-lg border border-gray-200 bg-white text-xs" title="Peso"><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semibold</option><option value="700">Bold</option><option value="800">Extra Bold</option><option value="900">Black</option></select>
+      <select onChange={e => format('fontweight', e.target.value)} className="h-9 px-2 rounded-lg border border-gray-200 bg-white text-xs" title="Peso" aria-label="Peso"><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semibold</option><option value="700">Bold</option><option value="800">Extra Bold</option><option value="900">Black</option></select>
       <span className="w-px h-7 bg-gray-300"></span>
-      <button type="button" className={buttonClass} onClick={() => toggleFormat('bold')} title="Negrita">B</button>
-      <button type="button" className={`${buttonClass} italic`} onClick={() => toggleFormat('italic')} title="Cursiva">I</button>
-      <button type="button" className={`${buttonClass} underline`} onClick={() => toggleFormat('underline')} title="Subrayado">U</button>
-      <button type="button" className={buttonClass} onClick={() => toggleFormat('strike')} title="Tachado">S</button>
+      <button type="button" className={buttonClass} onClick={() => toggleFormat('bold')} title="Negrita" aria-label="Negrita"><i className="fas fa-bold" aria-hidden="true"></i></button>
+      <button type="button" className={`${buttonClass} italic`} onClick={() => toggleFormat('italic')} title="Cursiva" aria-label="Cursiva"><i className="fas fa-italic" aria-hidden="true"></i></button>
+      <button type="button" className={`${buttonClass} underline`} onClick={() => toggleFormat('underline')} title="Subrayado" aria-label="Subrayado"><i className="fas fa-underline" aria-hidden="true"></i></button>
+      <button type="button" className={buttonClass} onClick={() => toggleFormat('strike')} title="Tachado" aria-label="Tachado"><i className="fas fa-strikethrough" aria-hidden="true"></i></button>
       <span className="w-px h-7 bg-gray-300"></span>
-      <button type="button" className="w-9 h-9 rounded-lg bg-yellow-300 border border-yellow-400" onClick={() => format('background', '#fef08a')} title="Resaltador amarillo"></button>
-      <button type="button" className="w-9 h-9 rounded-lg bg-lime-300 border border-lime-400" onClick={() => format('background', '#bef264')} title="Resaltador verde"></button>
-      <button type="button" className="w-9 h-9 rounded-lg bg-pink-300 border border-pink-400" onClick={() => format('background', '#f9a8d4')} title="Resaltador rosa"></button>
-      <button type="button" className={buttonClass} onClick={() => format('background', false)} title="Quitar resaltado"><i className="fas fa-eraser"></i></button>
+      <button type="button" className="w-9 h-9 rounded-lg bg-yellow-300 border border-yellow-400" onClick={() => format('background', '#fef08a')} title="Resaltador amarillo" aria-label="Resaltador amarillo"><i className="fas fa-highlighter" style={{color:'#18212d'}} aria-hidden="true"></i></button>
+      <button type="button" className="w-9 h-9 rounded-lg bg-lime-300 border border-lime-400" onClick={() => format('background', '#bef264')} title="Resaltador verde" aria-label="Resaltador verde"><i className="fas fa-highlighter" style={{color:'#18212d'}} aria-hidden="true"></i></button>
+      <button type="button" className="w-9 h-9 rounded-lg bg-pink-300 border border-pink-400" onClick={() => format('background', '#f9a8d4')} title="Resaltador rosa" aria-label="Resaltador rosa"><i className="fas fa-highlighter" style={{color:'#18212d'}} aria-hidden="true"></i></button>
+      <button type="button" className={buttonClass} onClick={() => format('background', false)} title="Quitar resaltado" aria-label="Quitar resaltado"><i className="fas fa-eraser"></i></button>
       <span className="w-px h-7 bg-gray-300"></span>
       {['','center','right','justify'].map((align, index) => <button type="button" key={align || 'left'} className={buttonClass} onClick={() => format('align', align || false)} title={['Alinear izquierda','Centrar','Alinear derecha','Justificar'][index]}><i className={`fas fa-align-${align || 'left'}`}></i></button>)}
-      <button type="button" className={buttonClass} onClick={() => format('list', 'bullet')} title="Viñetas"><i className="fas fa-list-ul"></i></button>
-      <button type="button" className={buttonClass} onClick={() => format('list', 'ordered')} title="Numeración"><i className="fas fa-list-ol"></i></button>
-      <button type="button" className={buttonClass} onClick={() => format('indent', '+1')} title="Aumentar nivel"><i className="fas fa-indent"></i></button>
-      <button type="button" className={buttonClass} onClick={() => format('indent', '-1')} title="Reducir nivel"><i className="fas fa-outdent"></i></button>
-      <select onChange={e => format('lineheight', e.target.value)} className="h-9 px-2 rounded-lg border border-gray-200 bg-white text-xs" title="Interlineado"><option value="1">1.0</option><option value="1.15">1.15</option><option value="1.5">1.5</option><option value="1.75">1.75</option><option value="2">2.0</option></select>
-      <select onChange={e => format('paragraphspace', e.target.value)} className="h-9 px-2 rounded-lg border border-gray-200 bg-white text-xs" title="Espacio entre párrafos"><option value="0">Párrafo 0</option><option value="6px">6 px</option><option value="12px">12 px</option><option value="18px">18 px</option><option value="24px">24 px</option></select>
-      <button type="button" className={`${buttonClass} text-[10px]`} onClick={() => transformSelection('upper')} title="Convertir a mayúsculas">AA</button>
-      <button type="button" className={`${buttonClass} text-[10px]`} onClick={() => transformSelection('lower')} title="Convertir a minúsculas">aa</button>
-      <button type="button" className={`${buttonClass} text-[10px]`} onClick={() => transformSelection('sentence')} title="Tipo oración">Aa</button>
-      <button type="button" className={buttonClass} onClick={() => quillInstance.current?.history.undo()} title="Deshacer"><i className="fas fa-rotate-left"></i></button>
-      <button type="button" className={buttonClass} onClick={() => quillInstance.current?.history.redo()} title="Rehacer"><i className="fas fa-rotate-right"></i></button>
-      <button type="button" className={buttonClass} onClick={() => quillInstance.current?.removeFormat(0, quillInstance.current.getLength())} title="Limpiar formato"><i className="fas fa-broom"></i></button>
+      <button type="button" className={buttonClass} onClick={() => format('list', 'bullet')} title="Viñetas" aria-label="Viñetas"><i className="fas fa-list-ul"></i></button>
+      <button type="button" className={buttonClass} onClick={() => format('list', 'ordered')} title="Numeración" aria-label="Numeración"><i className="fas fa-list-ol"></i></button>
+      <button type="button" className={buttonClass} onClick={() => format('indent', '+1')} title="Aumentar nivel" aria-label="Aumentar nivel"><i className="fas fa-indent"></i></button>
+      <button type="button" className={buttonClass} onClick={() => format('indent', '-1')} title="Reducir nivel" aria-label="Reducir nivel"><i className="fas fa-outdent"></i></button>
+      <select onChange={e => format('lineheight', e.target.value)} className="h-9 px-2 rounded-lg border border-gray-200 bg-white text-xs" title="Interlineado" aria-label="Interlineado"><option value="1">1.0</option><option value="1.15">1.15</option><option value="1.5">1.5</option><option value="1.75">1.75</option><option value="2">2.0</option></select>
+      <select onChange={e => format('paragraphspace', e.target.value)} className="h-9 px-2 rounded-lg border border-gray-200 bg-white text-xs" title="Espacio entre párrafos" aria-label="Espacio entre párrafos"><option value="0">Párrafo 0</option><option value="6px">6 px</option><option value="12px">12 px</option><option value="18px">18 px</option><option value="24px">24 px</option></select>
+      <button type="button" className={`${buttonClass} text-[10px]`} onClick={() => transformSelection('upper')} title="Convertir a mayúsculas" aria-label="Convertir a mayúsculas">AA</button>
+      <button type="button" className={`${buttonClass} text-[10px]`} onClick={() => transformSelection('lower')} title="Convertir a minúsculas" aria-label="Convertir a minúsculas">aa</button>
+      <button type="button" className={`${buttonClass} text-[10px]`} onClick={() => transformSelection('sentence')} title="Tipo oración" aria-label="Tipo oración">Aa</button>
+      <button type="button" className={buttonClass} onClick={() => quillInstance.current?.history.undo()} title="Deshacer" aria-label="Deshacer"><i className="fas fa-rotate-left"></i></button>
+      <button type="button" className={buttonClass} onClick={() => quillInstance.current?.history.redo()} title="Rehacer" aria-label="Rehacer"><i className="fas fa-rotate-right"></i></button>
+      <button type="button" className={buttonClass} onClick={() => quillInstance.current?.removeFormat(0, quillInstance.current.getLength())} title="Limpiar formato" aria-label="Limpiar formato"><i className="fas fa-broom"></i></button>
     </div>
     {!ready && <div className="p-8 text-center text-gray-400">Preparando editor…</div>}
     <div ref={editorElement}></div>
@@ -6512,7 +6512,7 @@ ritualRoot.render(<LibroPastoralApp />);
 })();
 </script><script>/* Use the published editor itself: one source, one Firebase connection and the existing viewer URL. */
 (()=>{
- const editorUrl='editor-liturgia.html';
+ const editorUrl='editor-liturgia.html?v=8.9.7';
  const button=document.createElement('button');
  button.id='tab-liturgia';button.type='button';button.className=document.getElementById('tab-personal').className;
  button.innerHTML='<i class="fas fa-list-ol mr-2" aria-hidden="true"></i>Orden de Cultos';button.onclick=()=>switchTab('liturgia');

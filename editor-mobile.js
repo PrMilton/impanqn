@@ -6,7 +6,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const labels={title:'Título',role:'Responsable',label:'Postura indicada',description:'Descripción',phrase:'Frase de conducción',text:'Texto',quote:'Ejemplo / proclamación',note:'Recordatorio',institution:'Institución'};
 const keys=kind=>kind==='meta'?['title','institution']:kind==='steps'?['title','role','label','description','phrase']:kind==='principles'?['title','text','quote','note']:['title','text','note'];
 const paths={menu:'M4 6h16M4 12h16M4 18h16',add:'M12 4v16M4 12h16',content:'M5 4h14v16H5zM8 8h8M8 12h8M8 16h5',style:'M4 20L12 4l8 16M7 14h10',preview:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 1 0 0-6',undo:'M9 5L4 10l5 5M4 10h10a6 6 0 0 1 6 6',redo:'M15 5l5 5-5 5M20 10H10a6 6 0 0 0-6 6',header:'M4 5h16M8 5v15M16 5v15',print:'M6 9V3h12v6M6 17H3V9h18v8h-3M6 14h12v7H6z'};
-const icon=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[n]||paths.content}"/></svg>`;
+const faIcons={menu:'bars',add:'plus',content:'list-ul',style:'font',preview:'eye',undo:'rotate-left',redo:'rotate-right',header:'heading',print:'print'};
+const icon=n=>'<i class="fa-solid fa-'+(faIcons[n]||faIcons.content)+'" aria-hidden="true"></i>';
 const root=document.createElement('section');root.id='compact-editor';root.setAttribute('aria-label','Editor compacto');document.querySelector('#day-workspace').append(root);
 const dialog=document.createElement('dialog');dialog.id='compact-dialog';document.body.append(dialog);
 const toggle=document.createElement('button');toggle.id='compact-mode';toggle.textContent='Vista compacta';document.querySelector('.appbar').append(toggle);
